@@ -68,6 +68,25 @@ function PageLogin() {
         }
     };
 
+    const getPlaceholder = (participateAs: string) => {
+        switch (participateAs) {
+            case 'Đảng viên':
+                return 'Chọn tổ chức cơ sở Đảng';
+            case 'Nhân viên':
+                return 'Cơ quan, đơn vị';
+            case 'Đoàn viên/Hội viên':
+                return 'Sinh hoạt tại chi/hội';
+            case 'Giáo viên':
+                return 'Trường';
+            case 'Học sinh':
+                return 'Trường';
+            case 'Thành phần khác':
+                return 'Tại phường';
+            default:
+                return 'Chọn tổ chức cơ sở Đảng';
+        }
+    }
+
     return (
         <section className="bg-[url('/assets/bg.jpg')] bg-cover pb-36 md:pb-56 3xl:pb-80 pt-12">
             <Container>
@@ -200,14 +219,9 @@ function PageLogin() {
                                     <>
                                         <div className="flex items-center border border-gray-300 rounded w-full overflow-hidden">
                                             <p className="self-stretch flex items-center px-3 text-sm border-r bg-neutral-100">
-                                                { watch('participateAs') == 'Nhân viên' && 'Cơ quan, đơn vị' }
-                                                { watch('participateAs') == 'Đoàn viên/Hội viên' && 'Sinh hoạt tại chi/hội' }
-                                                { watch('participateAs') == 'Giáo viên' && 'Trường' }
-                                                { watch('participateAs') == 'Học sinh' && 'Trường' }
-                                                { watch('participateAs') == 'Thành phần khác' && 'Tại phường' }
+                                                { getPlaceholder(watch('participateAs')) }
                                             </p>
-                                            <input type="text" className='py-2 px-3 outline-none' {...register('localUnit', { required: 'Trường này là bắt buộc' })} placeholder='Nhập tổ chức cơ sở' />
-                                            
+                                            <input type="text" className='py-2 px-3 outline-none' {...register('localUnit', { required: 'Trường này là bắt buộc' })} placeholder={getPlaceholder(watch('participateAs'))} />
                                         </div>
                                         {errors.localUnit && <p className='text-red-500 text-sm !mt-1'>{errors.localUnit.message}</p>}
                                     </>
