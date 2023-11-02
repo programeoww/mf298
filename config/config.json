@@ -7,16 +7,16 @@
     "dialect": "mysql"
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
+    "username": "mf298deoydi_omni",
+    "password": "AKDIOR6o11dF1BNKQ",
+    "database": "omni_mf298deoydi",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
+    "username": "mf298deoydi_omni",
+    "password": "AKDIOR6o11dF1BNKQ",
+    "database": "omni_mf298deoydi",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
