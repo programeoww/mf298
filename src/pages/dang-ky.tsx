@@ -96,7 +96,7 @@ function PageLogin() {
                                 {errors.password && <p className='text-red-500 text-sm mt-1'>{errors.password.message}</p>}
                             </div>
                             <div className="relative">
-                                <p className='font-medium mb-2'>Ngày sinh</p>
+                                <p className='font-medium mb-2'>Năm sinh</p>
                                 <Controller 
                                     control={control}
                                     name="birthday"
@@ -110,7 +110,7 @@ function PageLogin() {
                                             classNames={{
                                                 option: ({isFocused})=>`!cursor-pointer ${isFocused ? '!text-white' : ''}`,
                                             }} 
-                                            placeholder='Chọn ngày sinh'
+                                            placeholder='Chọn năm sinh'
                                             theme={(theme) => ({
                                                 ...theme,
                                                 colors: {

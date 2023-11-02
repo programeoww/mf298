@@ -9,7 +9,7 @@ function Footer() {
                     <Image src={'/assets/Capa_1.png'} quality={100} alt="Capa_1" fill className="z-10 xl:object-contain object-cover" />
                 </div>
                 <Container className="py-12 lg:py-[100px]">
-                    <div className="flex flex-wrap font-bold text-[28px] -m-3 lg:-m-8">
+                    <div className="flex flex-wrap font-bold text-[28px] -m-3 lg:-m-8" id="the-le">
                         <div className="md:w-1/3 flex flex-col justify-end w-full p-4 lg:p-8 text-center space-y-8">
                             <h4>THỂ LỆ CUỘC THI</h4>
                             <div className="relative pt-[100%]">

@@ -64,10 +64,10 @@ export default function Home() {
           </div>
           <div className="flex flex-col md:flex-row font-semibold uppercase md:w-fit mx-auto -my-2">
             <div className="p-2">
-              <button className="w-full bg-red-100 text-primary-400 py-[14px] px-6 rounded border border-primary-400 hover:bg-red-200 duration-150">XEM THỂ LỆ CUỘC THI</button>
+              <Link href={'#the-le'} className="w-full block text-center bg-red-100 text-primary-400 py-[14px] px-6 rounded border border-primary-400 hover:bg-red-200 duration-150">XEM THỂ LỆ CUỘC THI</Link>
             </div>
             <div className="p-2">
-              <Link href={'/lam-bai'} className="w-full block bg-primary-400 text-white py-[14px] px-6 rounded border border-primary-400 hover:bg-red-600 duration-150">VÀO THI NGAY</Link>
+              <Link href={'/lam-bai'} className="w-full block text-center bg-primary-400 text-white py-[14px] px-6 rounded border border-primary-400 hover:bg-red-600 duration-150">VÀO THI NGAY</Link>
             </div>
           </div>
           { session?.user && <button onClick={()=>signOut()} className="!mt-0 block mx-auto text-sm text-primary-400">Đăng xuất</button> }
@@ -128,10 +128,10 @@ export default function Home() {
               </ul>
             </div>
           </div>
-          <div className='lg:w-7/12 lg:px-6 leading-none self-stretch'>
-            <div className='p-6 bg-white space-y-14 rounded-lg h-full relative'>
-              <div className="absolute top-6 flex justify-between left-6 right-6">
-                <h2 className='text-xl font-bold flex space-x-2 uppercase items-center'>
+          <div className='w-full mt-10 lg:mt-0 lg:w-7/12 lg:px-6 leading-none self-stretch'>
+            <div className='p-6 bg-white space-y-24 lg:space-y-14 lg:rounded-lg h-full relative'>
+              <div className="absolute top-6 flex flex-col lg:flex-col gap-3 justify-between left-6 right-6">
+                <h2 className='text-lg lg:text-xl font-bold flex space-x-2 uppercase items-center'>
                   <span className='w-1 my-[2px] rounded-r bg-yellow-500 block self-stretch'></span>
                   <span>SỐ LIỆU THỐNG KÊ</span>
                 </h2>

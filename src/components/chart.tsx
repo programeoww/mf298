@@ -49,6 +49,6 @@ const data = {
   ],
 };
 
-export default function Chart() {
-  return <Bar options={options} data={data} />;
+export default function Chart({className} : {className?: string}) {
+  return <Bar className={className} options={options} data={data} />;
 }
