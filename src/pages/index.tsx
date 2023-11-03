@@ -96,11 +96,11 @@ export const getServerSideProps : GetServerSideProps = async (context) => {
     }, {}) : []
 
     statistic.push({
-      labels: Object.keys(localUnitHaveMostUserAttempt).map((item: any) => item),
+      labels: Object.keys(localUnitHaveMostUserAttempt).slice(0, 7).map((item: any) => item),
       datasets: [
         {
           label: 'Lượt thi',
-          data: Object.keys(localUnitHaveMostUserAttempt).map((item: any) => localUnitHaveMostUserAttempt[item]),
+          data: Object.keys(localUnitHaveMostUserAttempt).slice(0, 7).map((item: any) => localUnitHaveMostUserAttempt[item]),
           backgroundColor: '#47B26B',
         },
       ],

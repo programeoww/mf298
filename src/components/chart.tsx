@@ -33,8 +33,30 @@ const options = {
     y: {
       min: 0,
       max: 200,
+    },
+    x: {
+      ticks: {
+        callback: function (value: any): string {
+          return (this as any).getLabelForValue(value).slice(0, 6) + '...';
+        }
+      }
     }
   },
+  // tooltips: {
+  //   enabled: true,
+  //   mode: 'label',
+  //   callbacks: {
+  //     title: function(tooltipItems, data) {
+  //       var idx = tooltipItems[0].index;
+  //       return 'Title:' + data.labels[idx]; //do something with title
+  //     },
+  //     label: function(tooltipItems, data) {
+  //       //var idx = tooltipItems.index;
+  //       //return data.labels[idx] + ' €';
+  //       return tooltipItems.xLabel + ' €';
+  //     }
+  //   }
+  // },
 };
 
 const initData = {
