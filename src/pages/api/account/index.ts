@@ -1,4 +1,4 @@
-import { UserModel } from "@/services/database";
+import { UserModel } from "@models";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
