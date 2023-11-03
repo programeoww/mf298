@@ -1,44 +1,25 @@
 'use strict';
-
-const { ENUM } = require('sequelize');
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable('quiz_answers', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING
-      },
-      birthday: {
+      quiz_attempt_id: {
         type: Sequelize.INTEGER
       },
-      password: {
+      question: {
         type: Sequelize.STRING
       },
-      phone: {
+      answer: {
         type: Sequelize.STRING
       },
-      participateAs: {
-        type: Sequelize.STRING
-      },
-      localUnit: {
-        type: Sequelize.STRING
-      },
-      subLocalUnit: {
-        type: Sequelize.STRING
-      },
-      address: {
-        type: Sequelize.STRING
-      },
-      role: {
-        type: ENUM('admin', 'user'),
-        defaultValue: 'user'
+      timestamp: {
+        type: Sequelize.DATE
       },
       createdAt: {
         allowNull: false,
@@ -51,6 +32,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable('quiz_answers');
   }
 };

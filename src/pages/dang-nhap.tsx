@@ -16,7 +16,7 @@ type FormValues = {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await getSession(context);
     
-    if(session) {
+    if(session?.user) {
         return {
             redirect: {
                 destination: '/',

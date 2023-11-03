@@ -26,6 +26,17 @@ export interface CustomAxiosInstance {
     patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponseData<T>>;
 }
 
-export default interface IQuestion {
+export interface IQuestion {
     [x: "Câu hỏi" | "Đáp án 1 ( Đáp án đúng)" | "Đáp án 2" | "Đáp án 3" | "Đáp án 4" | "question" | "answers" | "correctAnswer" | string] : string | number | Array<string> | null;
+}
+
+export interface ISubmitData { 
+    totalQuestion: string | number, 
+    score: string | number, 
+    unAnswered: string | number,
+    wrongAnswered: string | number, 
+    attemptId: string | number,
+    startTime: string,
+    endTime: string, 
+    file: string,
 }

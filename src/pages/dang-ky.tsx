@@ -30,7 +30,7 @@ type FormValues = {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await getSession(context);
     
-    if(session) {
+    if(session?.user) {
         return {
             redirect: {
                 destination: '/',
@@ -56,7 +56,6 @@ function PageLogin() {
     }, [error,setError])
 
     const onSubmit = async(data: FormValues) => {
-        data.localUnit = data.localUnit + (data.subLocalUnit ? ` - ${data.subLocalUnit}` : '');
         const { data: { success, message } } = await instance.post('/auth/register', data)
         if(success) {
             const res = await signIn('credentials', { phone: data.phone, password: data.password, redirect: true, callbackUrl: callbackUrl as string });

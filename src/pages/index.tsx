@@ -1,26 +1,198 @@
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
 import SVGCircle from '@/components/countdown'
 import Container from '@/components/container'
 import Chart from '@/components/chart'
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
-import axios from 'axios'
-import { useEffect } from 'react'
-import csvtojson from 'csvtojson'
+import { GetServerSideProps } from 'next'
+import contestWeekData from '@/data/contestWeekData'
+import moment from 'moment'
+import { QuizAttemptModel, UserModel } from '@models'
+import { Op } from 'sequelize'
+import { useEffect, useState } from 'react'
+import instance from '@/instance'
+import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
 
-const inter = Inter({ subsets: ['latin'] })
+export const getServerSideProps : GetServerSideProps = async (context) => {
+  const currentWeek = contestWeekData.findIndex((item) => {
+    const startTime = moment(item.startTime)
+    const endTime = moment(item.endTime)
+    const currentTime = moment().format()
+    return moment(currentTime).isBetween(startTime, endTime)
+  })
 
-const top10 = [{"id":6084,"name":"Vương Thiên Phú","localUnit":"Đoàn TNCS Hồ Chí Minh Trường THPT Hồng Hà","time":"0:26","score":"100"},{"id":6060,"name":"Nguyễn Phan Mỹ Duyên","localUnit":"Đoàn TNCS Hồ Chí Minh Trường THPT Hồng Hà","time":"0:26","score":"100"},{"id":6075,"name":"Phạm Thục Anh","localUnit":"Đoàn TNCS Hồ Chí Minh Trường THPT Hồng Hà","time":"0:27","score":"100"},{"id":6050,"name":"Nguyễn Minh Anh","localUnit":"Đoàn TNCS Hồ Chí Minh Trường THPT Hồng Hà","time":"0:27","score":"100"},{"id":5998,"name":"Lê Nam Phương","localUnit":"Đoàn TNCS Hồ Chí Minh Trường THPT Hồng Hà","time":"0:28","score":"100"},{"id":6066,"name":"Lâm Đức Hiếu","localUnit":"Đoàn TNCS Hồ Chí Minh Trường THPT Hồng Hà","time":"0:28","score":"100"},{"id":6057,"name":"Vũ Tam Bách","localUnit":"Đoàn TNCS Hồ Chí Minh Trường THPT Hồng Hà","time":"0:28","score":"100"},{"id":5995,"name":"Đặng Hồng Lịch","localUnit":"Đoàn TNCS Hồ Chí Minh Trường THPT Hồng Hà","time":"0:28","score":"100"},{"id":6076,"name":"Nguyễn Trọng Nghĩa","localUnit":"Đoàn TNCS Hồ Chí Minh Trường THPT Hồng Hà","time":"0:29","score":"100"},{"id":6073,"name":"Nguyễn Văn Hải Nam","localUnit":"Đoàn TNCS Hồ Chí Minh Trường THPT Hồng Hà","time":"0:29","score":"100"}]
+  const nearestWeek = contestWeekData.findIndex((item) => {
+    const startTime = moment(item.startTime)
+    const currentTime = moment().format()
+    return moment(currentTime).isBefore(startTime)
+  })
 
-export default function Home() {
+  const top10 = (await QuizAttemptModel.findAll({
+    order: [
+      ['score', 'DESC'],
+      ['total_time', 'ASC']
+    ],
+    attributes: ['id', 'score', 'total_time'],
+    limit: 10,
+    include: {
+        model: UserModel,
+        as: 'user',
+        attributes: ['name', 'localUnit']
+    },
+    where: {
+      createdAt: {
+        [Op.between]: [contestWeekData[currentWeek == -1 ? nearestWeek : currentWeek].startTime, contestWeekData[currentWeek == -1 ? nearestWeek : currentWeek].endTime]
+      }
+    }
+  })).map((item: any) => {
+    const minutes = Math.floor(item.total_time / 60) 
+    const seconds = item.total_time - minutes * 60
+    const score = ((100 / 20) * Number(item.score)).toFixed(0)
+    
+    return {
+      id: item.id,
+      name: item.user.name,
+      localUnit: item.user.localUnit,
+      time: `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`,
+      score
+    }
+  })
+
+  const statistic = [];
+
+  for (const week of contestWeekData) {
+    const thisWeekAttempt = (await QuizAttemptModel.findAll({
+      order: [
+        ['score', 'DESC'],
+        ['total_time', 'ASC']
+      ],
+      attributes: ['id', 'score', 'total_time'],
+      include: {
+          model: UserModel,
+          as: 'user',
+          attributes: ['name', 'localUnit','subLocalUnit']
+      },
+      where: {
+        createdAt: {
+          [Op.between]: [week.startTime, week.endTime]
+        }
+      }
+    })).map((item: any) => {
+      return {
+        id: item.id,
+        name: item.user.name,
+        localUnit: item.user.localUnit + ' - ' + item.user.subLocalUnit,
+      }
+    })
+
+    const localUnitHaveMostUserAttempt = thisWeekAttempt.length > 0 ? thisWeekAttempt.reduce((acc: any, curr: any) => {
+      if (acc[curr.localUnit]) {
+        acc[curr.localUnit]++
+      } else {
+        acc[curr.localUnit] = 1
+      }
+      return acc
+    }, {}) : []
+
+    statistic.push({
+      labels: Object.keys(localUnitHaveMostUserAttempt).map((item: any) => item),
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: Object.keys(localUnitHaveMostUserAttempt).map((item: any) => localUnitHaveMostUserAttempt[item]),
+          backgroundColor: '#47B26B',
+        },
+      ],
+    })
+  }
+
+  return {
+    props: {
+      top10,
+      statistic: JSON.parse(JSON.stringify(statistic))
+    }
+  }
+}
+
+type topItem = { 
+  id: string | number, 
+  name: string, 
+  localUnit: string, 
+  time: string,
+  score: string
+}
+
+type Statistic = {
+  labels: string[]
+  datasets: Dataset[]
+}
+
+type Dataset = {
+  label: string
+  data: number[]
+  backgroundColor: string
+}
+
+export default function Home({ top10, statistic } : { top10: topItem[], statistic: Statistic[] }) {  
+  const [currentWeekSelect, setCurrentWeekSelect] = useState<string | number>(0)
   const { data: session } = useSession()
-  useEffect(() => {
-    (async () => {
-      const { data } = await axios.get<string>('https://docs.google.com/spreadsheets/d/e/2PACX-1vRBBUlRVFMO908C0EMBHeyxOMw-2euDDb55AqZVVB5NOpNpPROpTKfa_Vn_730bS8MvJ1N0w-wW9bdj/pub?output=csv')
-      csvtojson().fromString(data).then((json) => console.log(json))
-    })()
-  }, [])
+  const [timer, setTimer] = useState({
+    days: 0,
+    hours: 0,
+    minute: 0,
+    second: 0
+  })
+  const currentWeek = contestWeekData.findIndex((item) => {
+    const startTime = moment(item.startTime)
+    const endTime = moment(item.endTime)
+    const currentTime = moment().format()
+    return moment(currentTime).isBetween(startTime, endTime)
+  })
+
+  const nearestWeek = contestWeekData.findIndex((item) => {
+    const startTime = moment(item.startTime)
+    const currentTime = moment().format()
+    return moment(currentTime).isBefore(startTime)
+  })
+
+  const getEndDate = () => {
+    let i = 0
+    while (contestWeekData[currentWeek ? i : currentWeek].endTime < moment().format() && i < contestWeekData.length - 1) {
+      i++
+    }
+    return contestWeekData[currentWeek ? i : currentWeek].endTime
+  }
+
+  const endDate = getEndDate()
+  const startDate = currentWeek === -1 ? contestWeekData[nearestWeek].startTime : contestWeekData[currentWeek].startTime
+
+  useEffect(()=>{
+    const interval = setInterval(()=>{
+      const distance = currentWeek == -1 ? moment(startDate).diff(moment()) : moment(endDate).diff(moment())
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minute = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+      const second = Math.floor((distance % (1000 * 60)) / 1000)
+      setTimer({days, hours, minute, second})
+    }, 1000)
+    return () => clearInterval(interval)
+  },[currentWeek, endDate, startDate])
+
+  const router = useRouter()
+
+  const handleStartQuiz = async () => {
+    if(!session?.user) {
+      router.push('/dang-nhap')
+    }else{
+      const {data} = await instance.post('/check')
+      if(data.data) {
+        router.push('/lam-bai')
+      }else{
+        toast.error(data.message)
+      }
+    }
+  }
 
   return (
     <>
@@ -36,28 +208,28 @@ export default function Home() {
             <div className="px-2 lg:px-3 w-4/12 lg:w-2/12 text-center">
               <div className='relative pointer-events-none'>
                 <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-xl lg:text-2xl'>{3}</p>
-                <SVGCircle total={24} bgColor='#E942334D' strokeColor='#E94233' value={3} />
+                <SVGCircle total={currentWeek == -1 ? Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) + Math.round(moment.duration(moment(startDate).diff(moment())).asDays()) : Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24))} bgColor='#E942334D' strokeColor='#E94233' value={timer.days} />
               </div>
               <p className='mt-3 text-lg'>Ngày</p>
             </div>
             <div className="px-2 lg:px-3 w-4/12 lg:w-2/12 text-center">
               <div className='relative pointer-events-none'>
-                <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-xl lg:text-2xl'>{2}</p>
-                <SVGCircle total={24} bgColor='#FFDC344D' strokeColor='#FFDC34' value={2} />
+                <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-xl lg:text-2xl'>{timer.hours}</p>
+                <SVGCircle total={24} bgColor='#FFDC344D' strokeColor='#FFDC34' value={timer.hours} />
               </div>
               <p className='mt-3 text-lg'>Giờ</p>
             </div>
             <div className="px-2 lg:px-3 w-4/12 lg:w-2/12 text-center">
               <div className='relative pointer-events-none'>
-                <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-xl lg:text-2xl'>{4}</p>
-                <SVGCircle bgColor='#47B26B4D' strokeColor='#47B26B' value={4} />
+                <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-xl lg:text-2xl'>{timer.minute}</p>
+                <SVGCircle bgColor='#47B26B4D' strokeColor='#47B26B' value={timer.minute} />
               </div>
               <p className='mt-3 text-lg'>Phút</p>
             </div>
             <div className="px-2 lg:px-3 w-4/12 lg:w-2/12 text-center">
               <div className='relative pointer-events-none'>
-                <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-xl lg:text-2xl'>{32}</p>
-                <SVGCircle bgColor='#457AE64D' strokeColor='#457AE6' value={32} />
+                <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-xl lg:text-2xl'>{timer.second}</p>
+                <SVGCircle bgColor='#457AE64D' strokeColor='#457AE6' value={timer.second} />
               </div>
               <p className='mt-3 text-lg'>Giây</p>
             </div>
@@ -67,7 +239,7 @@ export default function Home() {
               <Link href={'#the-le'} className="w-full block text-center bg-red-100 text-primary-400 py-[14px] px-6 rounded border border-primary-400 hover:bg-red-200 duration-150">XEM THỂ LỆ CUỘC THI</Link>
             </div>
             <div className="p-2">
-              <Link href={'/lam-bai'} className="w-full block text-center bg-primary-400 text-white py-[14px] px-6 rounded border border-primary-400 hover:bg-red-600 duration-150">VÀO THI NGAY</Link>
+              <button onClick={handleStartQuiz} className="w-full block text-center bg-primary-400 text-white py-[14px] px-6 rounded border border-primary-400 hover:bg-red-600 duration-150">VÀO THI NGAY</button>
             </div>
           </div>
           { session?.user && <button onClick={()=>signOut()} className="!mt-0 block mx-auto text-sm text-primary-400">Đăng xuất</button> }
@@ -125,21 +297,34 @@ export default function Home() {
                     </li>
                   ))
                 }
+                {
+                  top10.length == 0 && (
+                    <li className='odd:bg-[#EBEDEF] flex items-center px-3 py-2 rounded justify-between'>
+                      <div className="w-full flex items-center">
+                        <p className='font-bold text-center w-full'>Chưa có dữ liệu</p>
+                      </div>
+                    </li>
+                  )
+                }
               </ul>
             </div>
           </div>
           <div className='w-full mt-10 lg:mt-0 lg:w-7/12 lg:px-6 leading-none self-stretch'>
             <div className='p-6 bg-white space-y-24 lg:space-y-14 lg:rounded-lg h-full relative'>
-              <div className="absolute top-6 flex flex-col lg:flex-col gap-3 justify-between left-6 right-6">
+              <div className="absolute top-6 flex flex-col lg:flex-row gap-3 justify-between left-6 right-6">
                 <h2 className='text-lg lg:text-xl font-bold flex space-x-2 uppercase items-center'>
                   <span className='w-1 my-[2px] rounded-r bg-yellow-500 block self-stretch'></span>
                   <span>SỐ LIỆU THỐNG KÊ</span>
                 </h2>
-                <select className='text-neutral-500 font-semibold px-3 py-[6px] text-sm outline-none border rounded'>
-                  <option value="">31/01/2023 - 08/03/2023</option>
+                <select onChange={(e)=>setCurrentWeekSelect(e.target.value)} className='text-neutral-500 font-semibold px-3 py-[6px] text-sm outline-none border rounded'>
+                  {
+                    contestWeekData.map((item, index) => (
+                      <option key={index} value={index}>{moment(item.startTime).format('DD/MM/YYYY')} - {moment(item.endTime).format('DD/MM/YYYY')}</option>
+                    ))
+                  }
                 </select>
               </div>
-              <Chart />
+              <Chart data={statistic[currentWeekSelect as any]} />
             </div>
           </div>
         </Container>

@@ -37,18 +37,17 @@ const options = {
   },
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August']
-const data = {
-  labels,
+const initData = {
+  labels: [],
   datasets: [
     {
       label: 'Dataset 1',
-      data: [65, 59, 80, 81, 56, 55, 40, 99],
+      data: [],
       backgroundColor: '#47B26B',
     },
   ],
 };
 
-export default function Chart({className} : {className?: string}) {
-  return <Bar className={className} options={options} data={data} />;
+export default function Chart({className, data} : {className?: string, data?: any}) {
+  return <Bar className={className} options={options} data={data || initData} />;
 }

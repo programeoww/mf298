@@ -1,6 +1,6 @@
 import { CreationOptional, DataTypes, ENUM, InferAttributes, InferCreationAttributes, Model, Sequelize } from 'sequelize';
 
-class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+class QuizAttempt extends Model<InferAttributes<QuizAttempt>, InferCreationAttributes<QuizAttempt>> {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,55 +9,57 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 
     declare id: CreationOptional<number>;
     
-    declare name: string;
-    declare birthday: number;
-    declare password: string;
-    declare phone: string;
-    declare participateAs: string;
-    declare localUnit: string;
-    declare subLocalUnit: string;
-    declare address: string;
-    declare role: 'admin' | 'user';
+    declare user_id: number;
+    declare file_path: string;
+    declare score: number;
+    declare start_time: string;
+    declare end_time: string;
+    declare total_time: number;
+    declare certificate_path: string;
+    declare unAnswered: number;
+    declare wrongAnswered: number;
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 }
 
-export const UserModel = (sequelize: Sequelize) => {
-    User.init({
+export const QuizAttemptModel = (sequelize: Sequelize) => {
+    QuizAttempt.init({
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false
+        user_id: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'Users',
+                key: 'id'
+            }
         },
-        birthday: {
+        file_path: {
+            type: DataTypes.STRING
+        },
+        score: {
             type: DataTypes.INTEGER
         },
-        password: {
+        start_time: {
             type: DataTypes.STRING
         },
-        phone: {
+        end_time: {
             type: DataTypes.STRING
         },
-        participateAs: {
+        total_time: {
+            type: DataTypes.INTEGER
+        },
+        certificate_path: {
             type: DataTypes.STRING
         },
-        localUnit: {
-            type: DataTypes.STRING
+        unAnswered: {
+            type: DataTypes.INTEGER
         },
-        subLocalUnit: {
-            type: DataTypes.STRING
-        },
-        address: {
-            type: DataTypes.STRING
-        },
-        role: {
-            type: ENUM('admin', 'user'),
-            defaultValue: 'user'
+        wrongAnswered: {
+            type: DataTypes.INTEGER
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -69,10 +71,10 @@ export const UserModel = (sequelize: Sequelize) => {
         },
     }, {
         sequelize,
-        modelName: 'User',
+        modelName: 'quiz_attempt',
     });
 
-    return User;
+    return QuizAttempt;
 }
 
-export interface IUser extends InferAttributes<User> {}
+export interface IQuizAttempt extends InferAttributes<QuizAttempt> {}

@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import NextAuth, { Session } from 'next-auth';
 import CredentialsProvider from "next-auth/providers/credentials";
-import { UserModel } from '@models';
+import { IUser, UserModel } from '@models';
 import { Op } from 'sequelize';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const providers = [
     CredentialsProvider({
@@ -32,13 +33,13 @@ const providers = [
     
                 if (user) {
                     return {
-                        id: user.dataValues.id.toString()
+                        id: user.dataValues.id.toString(),
+                        accessToken: jwt.sign({ sub: user.dataValues.id.toString() }, process.env.JWT_SECRET!, { expiresIn: '30d' })
                     }
                 }
 
                 return null;
             } catch (error) {
-                // Return null if user data could not be retrieved
                 return null;
             }
         },
@@ -46,17 +47,29 @@ const providers = [
 ]
 
 const callbacks = {
-    session: async ({ session, token } : { session: Session, token: { sub?: string | undefined } }) => {
+    jwt: async ({ token, user } : { token: any, user?: any }) => {
+        if(user){
+            token.accessToken = user.accessToken;
+        }
+
+        return Promise.resolve(token);
+    },
+    session: async ({ session, token } : { session: Session, token: any }) => {
         try {
             const user = await UserModel.findOne({
                 where: {
                     id: token.sub
                 },
-                attributes: ['id', 'name', 'phone', 'role']
+                attributes: ['id', 'name', 'phone', 'role', 'participateAs', 'localUnit']
             });
 
             if(user) {
                 session.user = user;
+                session.accessToken = token.accessToken;
+            }else{
+                session.user = undefined;
+                session.accessToken = undefined;
+                return Promise.resolve(session);
             }
         } catch (error) {
             return Promise.resolve(session);

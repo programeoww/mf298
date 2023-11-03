@@ -1,6 +1,12 @@
 import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
 
+type WithAuthProps = {
+    redirectUrl?: string;
+    callbackUrl?: string;
+    redirect?: boolean;
+};
+
 /**
    * This function is a wrapper for getServerSideProps that checks if the user is authenticated and has the required roles.
    *
@@ -20,36 +26,39 @@ import { getSession } from 'next-auth/react';
    * 
    *
 */
-export function withAuth(gssp: any, roles: string[], redirect = '/dang-nhap') {
-  return async function WithRolesWrapper(context: GetServerSidePropsContext) {
-    const session = await getSession(context);
-    if(!session) return {
-        redirect: {
-            destination: redirect,
-            statusCode: 302,
-        }
-    }
+export function withAuth(gssp: any, roles: string[], options?: WithAuthProps) {
+    const { redirectUrl = '/dang-nhap', callbackUrl = '/', redirect = true } = options || {};
 
-    if(Object.keys(session.user).length === 0) return {
-        redirect: {
-            destination: redirect,
-            statusCode: 302,
-        }
-    }
+    return async function WithRolesWrapper(context: GetServerSidePropsContext) {
+        const session = await getSession(context);
 
-    const isAuthenticated = roles.some((permission) =>
-        session.user?.role === permission
-    )
-
-    if (isAuthenticated || roles.length === 0) {
-        return await gssp(context)
-    } else {
-        return {
+        if(!session || !session?.user) return {
             redirect: {
-                destination: '/',
+                destination: redirect ? `${redirectUrl}?callbackUrl=${process.env.ORIGIN + callbackUrl}` : redirectUrl,
                 statusCode: 302,
             }
-        };
+        }
+
+        if(!session.user || Object.keys(session.user).length === 0) return {
+            redirect: {
+                destination: redirect ? `${redirectUrl}?callbackUrl=${process.env.ORIGIN + callbackUrl}` : redirectUrl,
+                statusCode: 302,
+            }
+        }
+
+        const isAuthenticated = roles.some((permission) =>
+            session.user?.role === permission
+        )
+
+        if (isAuthenticated || roles.length === 0) {
+            return await gssp(context)
+        } else {
+            return {
+                redirect: {
+                    destination: '/',
+                    statusCode: 302,
+                }
+            };
+        }
     }
-  }
 }
