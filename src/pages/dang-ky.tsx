@@ -227,7 +227,7 @@ function PageLogin() {
                                 )
                             }
                             {
-                                watch('localUnit') && watch('localUnit').startsWith('Đảng bộ phường') && (
+                                watch('localUnit') && (watch('localUnit').startsWith('Đảng bộ phường') || watch('localUnit').startsWith('Đảng ủy phường')) && (
                                     <div>
                                         <Controller 
                                             control={control}
