@@ -12,7 +12,7 @@ const schema = Joi.object({
     phone: Joi.string().required(),
     participateAs: Joi.string().required(),
     localUnit: Joi.string().required(),
-    subLocalUnit: Joi.string().required(),
+    subLocalUnit: Joi.string().allow(null, ''),
     address: Joi.string().required(),
 })
 
