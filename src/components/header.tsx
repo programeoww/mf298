@@ -9,7 +9,7 @@ function Header() {
                     <a href={'/'} className="w-1/3 lg:w-[unset]">
                         <Image src="/assets/logo.png" alt="logo" width={240} height={161} />
                     </a>
-                    <h1 className="text-3xl lg:text-5xl font-bold">ĐẢNG BỘ <br className="lg:hidden" /> NAM TỪ LIÊM</h1>
+                    <h1 className="text-3xl lg:text-5xl font-bold">ĐẢNG BỘ <br className="lg:hidden" /> <span className="text-xl lg:text-5xl">QUẬN NAM TỪ LIÊM</span></h1>
                 </Container>
             </header>
         </>

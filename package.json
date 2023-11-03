@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-table": "^8.10.7",
     "@types/formidable": "^3.4.4",
     "axios": "^1.6.0",
     "bcryptjs": "^2.4.3",

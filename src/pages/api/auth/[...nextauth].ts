@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import NextAuth, { Session } from 'next-auth';
 import CredentialsProvider from "next-auth/providers/credentials";
-import { IUser, UserModel } from '@models';
+import { UserModel } from '@models';
 import { Op } from 'sequelize';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -60,7 +60,7 @@ const callbacks = {
                 where: {
                     id: token.sub
                 },
-                attributes: ['id', 'name', 'phone', 'role', 'participateAs', 'localUnit']
+                attributes: ['id', 'name', 'phone', 'role', 'participateAs', 'localUnit', 'address']
             });
 
             if(user) {

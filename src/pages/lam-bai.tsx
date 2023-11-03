@@ -15,6 +15,8 @@ import transformQuestion from "@/utils/transformQuestion";
 import shuffle from "@/utils/shuffle";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { QuizAttemptModel } from "@models";
+import { Op } from "sequelize";
 
 export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
     const session = (await getSession(context))!
@@ -30,21 +32,23 @@ export const getServerSideProps = withAuth(async (context: GetServerSidePropsCon
         const start_time = moment(contestWeekData[currentWeekIndex].startTime).utc(false)
         const end_time = moment(contestWeekData[currentWeekIndex].endTime).utc(false)
 
-        // const lastAttempt = await UserModel.findAll({
-        //     where: {
-        //         id: session.user.id,
-        //     },
-        //     order: [
-        //         ['createdAt', 'DESC']
-        //     ]
-        // })
+        const attemptCount = await QuizAttemptModel.count({
+            where: {
+                user_id: session.user.id,
+                createdAt: {
+                    [Op.between]: [start_time,end_time]
+                }
+            }
+        })
 
-        // if (lastAttempt){
-        //     resData = {
-        //         data: false,
-        //         message: "Tuần này bạn đã làm bài"
-        //     }
-        // }
+        if (attemptCount >= 2 && process.env.NODE_ENV !== "development" && session.user.role !== "admin") {
+            return {
+                redirect: {
+                    destination: '/',
+                    statusCode: 302,
+                }
+            }
+        }
     }else{
         return {
             redirect: {
@@ -159,7 +163,7 @@ function PageDoingQuiz({questions}: {questions: IQuestion[], startTime: string})
         setIsLoading(true)
         if (currentQuestion < questions.length - 1) {
             setCurrentQuestion((prev) => prev + 1)
-            setTimer(30)
+            setTimer(60)
             resetField('answer');
             setIsLoading(false)
         } else if(!uploadFile) {

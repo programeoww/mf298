@@ -56,6 +56,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         }
 
+        if(process.env.NODE_ENV === "development" || session?.user?.role === "admin") {
+            resData = {
+                data: true,
+                message: ""
+            }
+        }
+
         return res.json({
             success: true,
             ...resData

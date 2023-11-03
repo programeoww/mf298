@@ -243,6 +243,11 @@ export default function Home({ top10, statistic } : { top10: topItem[], statisti
             </div>
           </div>
           { session?.user && <button onClick={()=>signOut()} className="!mt-0 block mx-auto text-sm text-primary-400">Đăng xuất</button> }
+          {
+            session && session.user && (
+              <Link href="/account" className='!mt-1 block mx-auto text-sm text-primary-400 text-center'>Trang quản lý tài khoản</Link>
+            )
+          }
         </div>
       </div>
       <div className="bg-[url('/assets/bg.jpg')] bg-cover pb-48 3xl:pb-64 pt-12 lg:pt-[100px]">

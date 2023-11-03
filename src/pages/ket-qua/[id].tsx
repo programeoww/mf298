@@ -21,6 +21,8 @@ export const getServerSideProps = withAuth(async (context: GetServerSidePropsCon
         }
     }))?.dataValues
 
+    if(!attempt) return { notFound: true }
+
     const totalQuestion = (await QuizAnswerModel.count({
         where: {
             quiz_attempt_id: attempt?.id
