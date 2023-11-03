@@ -1,4 +1,4 @@
-import IQuestion from "@/interfaces";
+import {IQuestion} from "@/interfaces";
 
 const shuffle = (array: (string | number | string[] | null)[]) => { 
     for (let i = array.length - 1; i > 0; i--) { 
