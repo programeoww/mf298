@@ -12,7 +12,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <NextNProgress />
     <Layout>
       <Head>
-        <title>Cuộc thi trực tuyến</title>
+        <title>Đảng bộ quận Nam Từ Liêm</title>
       </Head>
       <Component {...pageProps} />
       <ToastContainer 

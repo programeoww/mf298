@@ -24,17 +24,16 @@ function Footer() {
                         </div>
                         <div className="md:w-1/3 flex flex-col justify-end w-full p-4 lg:p-8 text-center space-y-8">
                             <h4>KẾT NỐI VỚI CHÚNG TÔI</h4>
-                            <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Ffacebook&tabs=timeline&width=1080&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId" width={'100%'} className="md:h-52 lg:h-[350px]" style={{border: 'none', overflow: 'hidden'}} allowFullScreen allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" />
+                            <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fq.namtuliem&tabs=timeline&width=1080&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId" width={'100%'} className="md:h-52 lg:h-[350px]" style={{border: 'none', overflow: 'hidden'}} allowFullScreen allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" />
                         </div>
                     </div>
                 </Container>
                 <div className="bg-primary-400 text-white">
                     <Container className="py-12 !max-w-3xl space-y-4">
-                        <h1 className="uppercase font-bold text-xl">CỔNG THÔNG TIN ĐIỆN TỬ QUẬN NAM TỪ LIÊM - TP. HÀ NỘI</h1>
+                        <h1 className="uppercase font-bold text-xl">Quận ủy Nam Từ Liêm</h1>
                         <ul className="space-y-2">
-                            <li>Địa chỉ: <span className="font-bold">125 Đường Hồ Tùng Mậu, Phường Cầu Diễn, Quận Nam Từ Liêm, Thành phố Hà Nội</span></li>
-                            <li>Điện thoại: <span className="font-bold">024.38372950</span></li>
-                            <li>Email: <span className="font-bold">vanthu_namtuliem@hanoi.gov.vn</span></li>
+                            <li>Địa chỉ: <span className="font-bold">127 Hồ Tùng Mậu, Cầu Diễn, Nam Từ Liêm, Tp. Hà Nội</span></li>
+                            <li>Email: <span className="font-bold">vanthu_qunamtuliem@hanoi.gov.vn</span></li>
                         </ul>
                     </Container>
                 </div>
