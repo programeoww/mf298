@@ -69,7 +69,7 @@ export const UserModel = (sequelize: Sequelize) => {
         },
     }, {
         sequelize,
-        modelName: 'User',
+        modelName: 'user',
     });
 
     return User;
