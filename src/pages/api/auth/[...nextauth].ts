@@ -87,7 +87,7 @@ export const options = {
     secret: process.env.JWT_SECRET,
     session:{
         maxAge: 30 * 24 * 60 * 60, // 30 days
-    }
+    },
 }
 
 const Auth = (req: NextApiRequest, res: NextApiResponse) => NextAuth(req, res, options)

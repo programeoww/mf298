@@ -22,7 +22,7 @@ const createQuizAttempt = async (userId: number, startTime: string, endTime: str
         score,
         start_time: startTime,
         end_time: endTime,
-        total_time: moment(endTime).diff(moment(startTime), 'seconds'),
+        total_time: moment(endTime).diff(moment(startTime), 'second'),
         certificate_path: certificate_path,
         unAnswered,
         wrongAnswered

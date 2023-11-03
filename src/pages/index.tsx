@@ -82,7 +82,7 @@ export const getServerSideProps : GetServerSideProps = async (context) => {
       return {
         id: item.id,
         name: item.user.name,
-        localUnit: item.user.localUnit + ' - ' + item.user.subLocalUnit,
+        localUnit: item.user.subLocalUnit && item.user.subLocalUnit !== "" ? (item.user.localUnit + ' - ' + item.user.subLocalUnit) : item.user.localUnit,
       }
     })
 
@@ -99,7 +99,7 @@ export const getServerSideProps : GetServerSideProps = async (context) => {
       labels: Object.keys(localUnitHaveMostUserAttempt).map((item: any) => item),
       datasets: [
         {
-          label: 'Dataset 1',
+          label: 'Lượt thi',
           data: Object.keys(localUnitHaveMostUserAttempt).map((item: any) => localUnitHaveMostUserAttempt[item]),
           backgroundColor: '#47B26B',
         },
