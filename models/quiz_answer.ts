@@ -12,7 +12,7 @@ class QuizAnswer extends Model<InferAttributes<QuizAnswer>, InferCreationAttribu
     declare quiz_attempt_id: number;
     declare question: string;
     declare answer: string;
-    declare timestamp: Date;
+    declare timestamp: string;
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -34,7 +34,7 @@ export const QuizAnswerModel = (sequelize: Sequelize) => {
         },
         question: DataTypes.TEXT('long'),
         answer: DataTypes.TEXT('long'),
-        timestamp: DataTypes.DATE,
+        timestamp: DataTypes.STRING,
         createdAt: {
             type: DataTypes.DATE,
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')

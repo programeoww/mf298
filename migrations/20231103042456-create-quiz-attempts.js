@@ -18,8 +18,8 @@ module.exports = {
       },
       file_path: Sequelize.STRING,
       score: Sequelize.INTEGER,
-      start_time: Sequelize.DATE,
-      end_time: Sequelize.DATE,
+      start_time: Sequelize.STRING,
+      end_time: Sequelize.STRING,
       total_time: Sequelize.INTEGER,
       certificate_path: Sequelize.STRING,
       unAnswered: {
