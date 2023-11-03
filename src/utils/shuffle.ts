@@ -1,4 +1,4 @@
-import IQuestion from "@/interfaces";
+import { IQuestion } from "@/interfaces";
 
 export default function shuffle(array: (string | number | string[] | IQuestion | null)[]) {
     if (array instanceof Array) {
