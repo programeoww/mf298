@@ -61,7 +61,6 @@ export const getServerSideProps = withAuth(async (context: GetServerSidePropsCon
     return {
         props: {
             questions: transformQuestion(shuffle(question).slice(0, 20)),
-            startTime: moment().toISOString(true)
         }
     }
 }, [], { callbackUrl: '/lam-bai' });
@@ -71,7 +70,7 @@ type IFormInput = {
     file: FileList
 }
 
-function PageDoingQuiz({questions, startTime}: {questions: IQuestion[], startTime: string}) {
+function PageDoingQuiz({questions}: {questions: IQuestion[], startTime: string}) {
     const { register, resetField, control, getValues } = useForm<IFormInput>()
     const [timer, setTimer] = useState<number>(30)
     const [answer, setAnswer] = useState<{ answer: string | FileList, timestamp: string }[]>([])
@@ -80,6 +79,7 @@ function PageDoingQuiz({questions, startTime}: {questions: IQuestion[], startTim
     const { data: session } = useSession()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const router = useRouter()
+    const [startTime, setStartTime] = useState<string>("")
 
     const getPlaceholder = (participateAs: string) => {
         switch (participateAs) {
@@ -99,6 +99,12 @@ function PageDoingQuiz({questions, startTime}: {questions: IQuestion[], startTim
                 return 'Tổ chức cơ sở Đảng';
         }
     }
+
+    useEffect(() => {
+        if(session && session.user){
+            setStartTime(moment().toISOString(true))
+        }
+    }, [session])
 
     const watchAnswer = useWatch({
         name: 'answer',
